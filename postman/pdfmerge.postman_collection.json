@@ -1,0 +1,89 @@
+{
+	"info": {
+		"_postman_id": "64614335-6cdc-480a-8aa9-48dc58e5610c",
+		"name": "pdfmerge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19961340"
+	},
+	"item": [
+		{
+			"name": "merge files",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/janon/Downloads/file1.pdf"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/janon/Downloads/file2.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pdf/merge-files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pdf",
+						"merge-files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "merge pages",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"contentType": "",
+							"type": "file",
+							"src": "/C:/Users/janon/Downloads/file1.pdf"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/janon/Downloads/file2.pdf"
+						},
+						{
+							"key": "mergeSpecification",
+							"value": "{\"fileSpecifications\":[{\"file\":0,\"pageNumbers\":[1,2,3]},{\"file\":1,\"pageNumbers\":[1]},{\"file\":0,\"pageNumbers\":[1]}]}",
+							"contentType": "application/json",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pdf/merge-pages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pdf",
+						"merge-pages"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
