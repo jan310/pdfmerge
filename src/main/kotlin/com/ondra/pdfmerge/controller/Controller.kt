@@ -4,9 +4,7 @@ import com.itextpdf.text.Document
 import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfReader
 import com.ondra.pdfmerge.model.MergeSpecification
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
@@ -37,7 +35,10 @@ class Controller {
 
         document.close()
 
-        return ResponseEntity(outputStream.toByteArray(), HttpStatus.CREATED)
+        val headers = HttpHeaders()
+        headers.contentDisposition = ContentDisposition.builder("attachment").filename("merged.pdf").build()
+
+        return ResponseEntity(outputStream.toByteArray(), headers, HttpStatus.CREATED)
     }
 
     @PostMapping("/merge-pages", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_PDF_VALUE])
@@ -59,7 +60,10 @@ class Controller {
 
         document.close()
 
-        return ResponseEntity(outputStream.toByteArray(), HttpStatus.CREATED)
+        val headers = HttpHeaders()
+        headers.contentDisposition = ContentDisposition.builder("attachment").filename("merged.pdf").build()
+
+        return ResponseEntity(outputStream.toByteArray(), headers, HttpStatus.CREATED)
     }
 
 }
