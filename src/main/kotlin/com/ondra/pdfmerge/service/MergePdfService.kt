@@ -45,8 +45,9 @@ class MergePdfService {
             fileSpec.pageNumbers.forEach { pageNumber ->
                 pdfCopy.addPage(pdfCopy.getImportedPage(pdfReaderList[fileSpec.fileNumber], pageNumber))
             }
-            pdfReaderList[fileSpec.fileNumber].close()
         }
+        //since the same file can occur multiple times in a mergeSpec, it is necessary to wait until the merging process is over before the readers can be closed
+        pdfReaderList.forEach { it.close() }
 
         document.close()
 
