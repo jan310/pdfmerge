@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "merge files",
+			"name": "cache file",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -15,24 +15,14 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "files",
+							"key": "file",
 							"type": "file",
 							"src": "/C:/Users/janon/Downloads/doc1.pdf"
-						},
-						{
-							"key": "files",
-							"type": "file",
-							"src": "/C:/Users/janon/Downloads/doc2.pdf"
-						},
-						{
-							"key": "files",
-							"type": "file",
-							"src": "/C:/Users/janon/Downloads/doc3.pdf"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/pdf/merge-files",
+					"raw": "http://localhost:8080/api/pdf/cache-file",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -41,7 +31,7 @@
 					"path": [
 						"api",
 						"pdf",
-						"merge-files"
+						"cache-file"
 					]
 				}
 			},
@@ -53,30 +43,13 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "files",
-							"type": "file",
-							"src": "/C:/Users/janon/Downloads/doc1.pdf"
-						},
-						{
-							"key": "files",
-							"type": "file",
-							"src": "/C:/Users/janon/Downloads/doc2.pdf"
-						},
-						{
-							"key": "files",
-							"type": "file",
-							"src": "/C:/Users/janon/Downloads/doc3.pdf"
-						},
-						{
-							"key": "mergeSpecification",
-							"value": "{\"fileSpecifications\":[{\"fileNumber\":2,\"pageNumbers\":[3,7]},{\"fileNumber\":0,\"pageNumbers\":[1,2,4]},{\"fileNumber\":2,\"pageNumbers\":[1]},{\"fileNumber\":1,\"pageNumbers\":[2,1]}]}",
-							"contentType": "application/json",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\r\n   \"fileSpecifications\": [\r\n      {\r\n         \"fileId\": \"b50e7486-f95f-4580-98fa-7e9f38197b2d\",\r\n         \"pageNumbers\": [3,7]\r\n      },\r\n      {\r\n         \"fileId\": \"a3c8846c-8dbd-4a10-9063-e0101fe31684\",\r\n         \"pageNumbers\": [1,2,4]\r\n      },\r\n      {\r\n         \"fileId\": \"b50e7486-f95f-4580-98fa-7e9f38197b2d\",\r\n         \"pageNumbers\": [1]\r\n      },\r\n      {\r\n         \"fileId\": \"a90dd4b9-c91d-4872-958f-45b2fa58313f\",\r\n         \"pageNumbers\": [2,1]\r\n      }\r\n   ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "http://localhost:8080/api/pdf/merge-pages",
@@ -89,6 +62,36 @@
 						"api",
 						"pdf",
 						"merge-pages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "merge files",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ids\": [\"b50e7486-f95f-4580-98fa-7e9f38197b2d\", \"a3c8846c-8dbd-4a10-9063-e0101fe31684\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/pdf/merge-files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"pdf",
+						"merge-files"
 					]
 				}
 			},

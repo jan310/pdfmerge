@@ -1,5 +1,8 @@
 package com.ondra.pdfmerge.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.ondra.pdfmerge.model.FileIds
+import com.ondra.pdfmerge.model.FileMetaData
 import com.ondra.pdfmerge.model.FileSpecification
 import com.ondra.pdfmerge.model.MergeSpecification
 import com.ondra.pdfmerge.service.MergePdfService
@@ -16,7 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.io.File
+import java.util.UUID
 
 
 @WebMvcTest(MergePdfController::class)
@@ -28,22 +31,30 @@ class MergePdfControllerIntTest {
     @MockBean
     private lateinit var mergePdfService: MergePdfService
 
-    private val doc1 = MockMultipartFile("files", File("src/test/resources/doc1.pdf").readBytes())
-    private val doc2 = MockMultipartFile("files", File("src/test/resources/doc2.pdf").readBytes())
-    private val doc3 = MockMultipartFile("files", File("src/test/resources/doc3.pdf").readBytes())
-    private val json = MockMultipartFile("mergeSpecification", "mergeSpecification", MediaType.APPLICATION_JSON_VALUE, "{\"fileSpecifications\":[{\"fileNumber\":2,\"pageNumbers\":[3,7]},{\"fileNumber\":0,\"pageNumbers\":[1,2,4]},{\"fileNumber\":2,\"pageNumbers\":[1]},{\"fileNumber\":1,\"pageNumbers\":[2,1]}]}".toByteArray())
-    private val mergedFiles = File("src/test/resources/merged-files.pdf").readBytes()
-    private val mergedPages = File("src/test/resources/merged-pages.pdf").readBytes()
+    @Nested
+    inner class CacheFile {
+        @Test
+        fun checksIfEndpointReturnsExpectedResult() {
+            val fileMetaData = FileMetaData(UUID.randomUUID().toString(), 39469, 4)
+            val multipartFile = MockMultipartFile("file", ByteArray(1))
+            `when`(mergePdfService.cacheFile(multipartFile)).thenReturn(fileMetaData)
+
+            mvc.perform(MockMvcRequestBuilders.multipart("/api/pdf/cache-file").file(multipartFile))
+                .andExpect(status().isOk)
+                .andExpect(content().json(ObjectMapper().writeValueAsString(fileMetaData)))
+        }
+    }
 
     @Nested
     inner class MergeFiles {
         @Test
         fun checksIfEndpointReturnsExpectedResult() {
-            `when`(mergePdfService.mergeFiles(arrayOf(doc1, doc2, doc3))).thenReturn(mergedFiles)
+            val fileIds = FileIds(listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString()))
+            `when`(mergePdfService.mergeFiles(fileIds.ids)).thenReturn(ByteArray(1))
 
-            mvc.perform(MockMvcRequestBuilders.multipart("/api/pdf/merge-files").file(doc1).file(doc2).file(doc3))
+            mvc.perform(MockMvcRequestBuilders.post("/api/pdf/merge-files").contentType(MediaType.APPLICATION_JSON).content(ObjectMapper().writeValueAsString(fileIds)))
                 .andExpect(status().isCreated)
-                .andExpect(content().bytes(mergedFiles))
+                .andExpect(content().bytes(ByteArray(1)))
                 .andExpect(content().contentType(MediaType.APPLICATION_PDF_VALUE))
                 .andExpect(header().string("content-disposition", "attachment; filename=\"merged.pdf\""))
         }
@@ -54,17 +65,14 @@ class MergePdfControllerIntTest {
         @Test
         fun checksIfEndpointReturnsExpectedResult() {
             val mergeSpecification = MergeSpecification(listOf(
-                FileSpecification(2, listOf(3, 7)),
-                FileSpecification(0, listOf(1, 2, 4)),
-                FileSpecification(2, listOf(1)),
-                FileSpecification(1, listOf(2, 1)),
+                FileSpecification(UUID.randomUUID().toString(), listOf(3,7)),
+                FileSpecification(UUID.randomUUID().toString(), listOf(2,1)),
             ))
+            `when`(mergePdfService.mergePages(mergeSpecification)).thenReturn(ByteArray(1))
 
-            `when`(mergePdfService.mergePages(arrayOf(doc1, doc2, doc3), mergeSpecification)).thenReturn(mergedPages)
-
-            mvc.perform(MockMvcRequestBuilders.multipart("/api/pdf/merge-pages").file(doc1).file(doc2).file(doc3).file(json))
+            mvc.perform(MockMvcRequestBuilders.post("/api/pdf/merge-pages").contentType(MediaType.APPLICATION_JSON).content(ObjectMapper().writeValueAsString(mergeSpecification)))
                 .andExpect(status().isCreated)
-                .andExpect(content().bytes(mergedPages))
+                .andExpect(content().bytes(ByteArray(1)))
                 .andExpect(content().contentType(MediaType.APPLICATION_PDF_VALUE))
                 .andExpect(header().string("content-disposition", "attachment; filename=\"merged.pdf\""))
         }
