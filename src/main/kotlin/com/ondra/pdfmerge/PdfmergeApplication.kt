@@ -15,6 +15,11 @@ import java.time.Duration
 @EnableCaching
 class PdfmergeApplication {
 
+    /**
+     * @return A CacheManager with a preconfigured cache called "fileCache".
+     * This cache can be used for storing up to ten elements (key: String, value: ByteArray) in the heap.
+     * Elements stored in this cache are only available for ten minutes and are evicted afterwards.
+     */
     @Bean
     fun getCacheManager(): CacheManager {
         val cacheConfigurationBuilder = newCacheConfigurationBuilder(String::class.java, ByteArray::class.java, ResourcePoolsBuilder.heap(10))
